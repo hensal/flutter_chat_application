@@ -1,0 +1,79 @@
+
+fetch the list og loggedin user too
+
+app.get("/chat-list", authenticateToken, async (req, res) => {
+  const userId = req.userId; // Logged-in user's ID
+  console.log("Fetching chat list for userId:", req.userId);
+  
+  try {
+    // First, check if the logged-in user has ever sent a message to themselves
+    const selfMessageQuery = `
+      SELECT EXISTS (
+        SELECT 1 
+        FROM messages 
+        WHERE (sender_id = $1 AND receiver_id = $1)
+      ) AS sent_to_self;
+    `;
+    const selfMessageResult = await pool.query(selfMessageQuery, [userId]);
+    const sentToSelf = selfMessageResult.rows[0].sent_to_self;
+
+    // Query to get the latest messages for each conversation involving the logged-in user
+    const query = `
+      WITH latest_messages AS (
+        SELECT DISTINCT ON (LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)) 
+               sender_id, receiver_id, message, created_at
+        FROM messages
+        WHERE sender_id = $1 OR receiver_id = $1
+        ORDER BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id), created_at DESC
+      )
+      -- Get all conversations where the logged-in user is involved
+      SELECT 
+        u.id, 
+        u.name, 
+        u.image, 
+        CASE 
+          WHEN u.id = $1 AND NOT $2 THEN 'No messages yet'  -- If logged-in user has never sent to themselves
+          ELSE COALESCE(lm.message, 'No messages yet') 
+        END AS last_message, 
+        COALESCE(lm.created_at, NOW()) AS last_message_time
+      FROM latest_messages lm
+      JOIN users u ON u.id = (
+        CASE 
+          WHEN lm.sender_id = $1 THEN lm.receiver_id  -- If logged-in user is sender, get receiver
+          ELSE lm.sender_id  -- Otherwise, get sender
+        END
+      )
+      WHERE u.id != $1  -- Exclude the logged-in user from the list
+      UNION
+      -- Include the logged-in user in their own chat with the appropriate message
+      SELECT 
+        u.id, 
+        u.name, 
+        u.image, 
+        CASE 
+          WHEN $2 THEN lm.message
+          ELSE 'No messages yet'
+        END AS last_message, 
+        COALESCE(lm.created_at, NOW()) AS last_message_time
+      FROM users u
+      LEFT JOIN latest_messages lm ON lm.sender_id = $1 AND lm.receiver_id = $1
+      WHERE u.id = $1  -- Ensure the logged-in user is included
+      ORDER BY last_message_time DESC;
+    `;
+
+    // Execute the query
+    const result = await pool.query(query, [userId, sentToSelf]);
+
+    // Check if there are any results
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "No chat history found" });
+    }
+
+    // Send the response with the latest chat list
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error("Error fetching chat list:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
