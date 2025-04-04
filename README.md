@@ -20,6 +20,10 @@ UI:
 
 ![chat screen](https://github.com/user-attachments/assets/54550969-ccdd-4c0f-9260-6f5bbcf74a88)
 
+![crea](https://github.com/user-attachments/assets/3d7a0008-8a79-47fd-af7d-836744547162)
+
+![fpr](https://github.com/user-attachments/assets/06d87cf9-7298-4189-90da-0785d5eb3f16)
+
 ![chat screen2](https://github.com/user-attachments/assets/491eef19-b213-4f3d-acdf-9956c439fef1)
 
 ![chat screen3](https://github.com/user-attachments/assets/0f25b587-ee5e-4eba-9513-04486a261b9a)
