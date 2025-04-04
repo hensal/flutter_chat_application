@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
         .showSnackBar(SnackBar(content: Text(message)));
   }
 final GoogleSignIn _googleSignIn = GoogleSignIn(
-  clientId: "417534979445-uufua4l4sq9a9e1lq6ccv2t1u1j53jju.apps.googleusercontent.com",
+  clientId: "7777745-uufuaghfgfgfe1gfgfgfgjju.apps.googleusercontent.com",
   scopes: ['email', 'profile', 'openid'],
 );
 
