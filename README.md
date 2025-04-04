@@ -1,4 +1,5 @@
-This is the flutter application where user can chat with each other.
+This is the flutter application where user can chat with each other. 
+Firstly, user login to the application, search the user and commence the chat with each other.
 
 Step 1:
    NodeJS version
