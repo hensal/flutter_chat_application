@@ -2,15 +2,17 @@ This is the flutter application where user can chat with each other.
 
 Step 1:
    NodeJS version
-       v18.13.0
+          v18.13.0
 Step 2:
+Create the .env file inside the server folder .
+      JWT_SECRET=mysecretkey123
+      GOOGLE_CLIENT_ID=6666445-uugggsq9a9egfgftgfg53fgju.apps.googleusercontent.com
     
 PostgreSQL:
 
 ![users](https://github.com/user-attachments/assets/8fd0ac12-6c7f-4016-931c-ce7cbff1160c)
 
 ![message](https://github.com/user-attachments/assets/29bf817b-594f-422e-b088-eee100d8193b)
-
 
 UI:
 
